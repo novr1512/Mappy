@@ -12,33 +12,57 @@
     
 
     <script type="text/javascript" type="text/javascript">
-           /**
-            * Setup all visualization elements when the page is loaded.
-            */
-           function init() {
-             // Connect to ROS.
-             var ros = new ROSLIB.Ros({
-               url : 'ws://localhost:9090'
-             });
-         
-             // Create the main viewer.
-             var viewer = new ROS2D.Viewer({
-               divID : 'map',
-               width : 600,
-               height : 500
-             });
-         
-             // Setup the map client.
-             var gridClient = new ROS2D.OccupancyGridClient({
-               ros : ros,
-               rootObject : viewer.scene
-             });
-             // Scale the canvas to fit to the map
-             gridClient.on('change', function(){
-              viewer.scaleToDimensions(gridClient.currentGrid.width, gridClient.currentGrid.height);
-             });
-           }
-         </script>
+        var ros = new ROSLIB.Ros({
+          url : 'ws://localhost:9090'
+        });
+      
+        ros.on('connection', function() {
+          document.getElementById("status").innerHTML = "Connected";
+        });
+      
+        ros.on('error', function(error) {
+          document.getElementById("status").innerHTML = "Error";
+        });
+      
+        ros.on('close', function() {
+          document.getElementById("status").innerHTML = "Closed";
+        });
+        var txt_listener = new ROSLIB.Topic({
+          ros : ros,
+          name : '/txt_msg',
+          messageType : 'std_msgs/String'
+        });
+      
+        txt_listener.subscribe(function(m) {
+          document.getElementById("msg").innerHTML = m.data;
+          move(1,0)
+        });
+      
+        cmd_vel_listener = new ROSLIB.Topic({
+          ros : ros,
+          name : "/cmd_vel_mux/input/navi",
+          messageType : 'geometry_msgs/Twist'
+        });
+      
+        move = function (linear, angular) {
+          var twist = new ROSLIB.Message({
+            linear: {
+              x: linear,
+              y: 0,
+              z: 0
+            },
+            angular: {
+              x: 0,
+              y: 0,
+              z: angular
+            }
+          });
+          cmd_vel_listener.publish(twist);
+        }
+      
+       
+      
+      </script>
          
 
 
@@ -98,75 +122,52 @@
     </div>
 </div>
 
-<!-- JOYSTICK -->
-<div class="row my-4">
-    <div class="col">
-        <div class="d-flex justify-content-center" style="width: 210px; height: 210px;">
-            <div id="joystick"></div>
-        </div>
-    </div>
-</div>
+<div id="zone_joystick" style="position: relative;"></div>
 
+  <script>
+       createJoystick = function () {
+      var options = {
+        zone: document.getElementById('zone_joystick'),
+        threshold: 0.1,
+        position: { left: 50 + '%' },
+        mode: 'static',
+        size: 150,
+        color: '#000000',
+      };
+      manager = nipplejs.create(options);
 
-<div id="app" class="container">
-    <div class="jumbotron">
-        <h1>Hello from ROSDS!</h1>
-    </div>
+      linear_speed = 0;
+      angular_speed = 0;
 
-    <div class="row" style="max-height:200px;">
-        <div class="col-md-6">
-            <h3>Connection status</h3>
+      self.manager.on('start', function (event, nipple) {
+        console.log("Movement start");
+        timer = setInterval(function () {
+    move(linear_speed, angular_speed);
+  }, 25);
+      });
 
-            <p class="text-success" v-if="connected">Connected!</p>
-            <p class="text-danger" v-else>Not connected!</p>
-            <label>Websocket server address</label>
-            <input type="text" v-model="ws_address" />                            <br />
-            
+      self.manager.on('move', function (event, nipple) {
+        console.log("Moving");
+        max_linear = 5.0; // m/s
+  max_angular = 2.0; // rad/s
+  max_distance = 75.0; // pixels;
+  linear_speed = Math.sin(nipple.angle.radian) * max_linear * nipple.distance/max_distance;
+  angular_speed = -Math.cos(nipple.angle.radian) * max_angular * nipple.distance/max_distance;
+      });
 
-            <button @click="disconnect" class="btn btn-danger" v-if="connected">Disconnect!</button>
-            <button @click="connect" class="btn btn-success" v-else>Connect!</button>
+      self.manager.on('end', function () {
+        console.log("Movement end");
+        if (timer) {
+    clearInterval(timer);
+  }
+  self.move(0, 0);
+      });
+    }
+    window.onload = function () {
+      createJoystick();
+    }
+  </script>
 
-        </div>
-        <div class="col-md-6" style="max-height:200px; overflow:auto;">
-            <h3>Log messages</h3>
-            <div>
-                <p v-for="log in logs">
-                    {{ log }}
-                </p>
-            </div>
-        </div>
-    </div>
-    <hr>
-
-    <div class="row">
-        <div class="col-md-12 text-center">
-            <h5>Commands</h5>
-        </div>
-<!-- 1st row -->
-<div class="col-md-12 text-center">
-    <button @click="forward"  class="btn btn-primary">Go forward</button>
-    <br><br>
-</div>
-
-<!-- 2nd row -->
-<div class="col-md-4 text-center">
-    <button @click="turnLeft"  class="btn btn-primary">Turn left</button>
-</div>
-<div class="col-md-4 text-center">
-    <button @click="stop"  class="btn btn-danger">Stop</button>
-    <br><br>
-</div>
-<div class="col-md-4 text-center">
-    <button @click="turnRight"  class="btn btn-primary">Turn right</button>
-</div>
-
-<!-- 3rd row -->
-<div class="col-md-12 text-center">
-    <button @click="backward"  class="btn btn-primary">Go backward</button>
-</div>
-
-    </div>
-</div>
 
 <!-- INFO -->
 <div class="row my-4">
@@ -183,11 +184,9 @@
     <div class="col-md-2"></div>
 </div>
 
-<div id="snackbar"><p v-for="log in logs">
-    {{ log }}
+<div id="snackbar"><p>
 </p></div>
 
-<script type="text/javascript" src="main.js">
-</script>
+
 </body>
 </html>
