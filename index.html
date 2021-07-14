@@ -115,12 +115,26 @@
 
 <div id="map"></div>
 
-<!-- VIDEO -->
+<!-- VIDEO /camera1/compressed/image 
+  image_topic.unsubscribe();
+-->
 <div class="row my-4">
     <div class="col d-flex justify-content-center">
-        <img src="" class="p-1 bg-dark" alt="" id="video" />
-    </div>
+        <img id="my_image" style='height: 100%; width: 100%; object-fit: contain' src="assets/img/placeholder.png">    </div>
 </div>
+
+<script>
+    var image_topic = new ROSLIB.Topic({
+  ros: ros, name: '/camera/rgb/image_raw/compressed',
+  messageType: 'sensor_msgs/CompressedImage'
+});
+
+image_topic.subscribe(function(message) {
+  document.getElementById('my_image').src = "data:image/jpg;base64," + message.data;
+});
+</script>
+
+
 
 <div id="zone_joystick" style="position: relative;"></div>
 
@@ -177,7 +191,7 @@
             <h4 class="alert-heading">Mappy demo</h4>
             <ul>
                 <li>set speed using a slider</li>
-                <li>use joystick or WASD keys on keyboard to move </li>
+                <li>use joystick</li>
             </ul>
         </div>
     </div>
