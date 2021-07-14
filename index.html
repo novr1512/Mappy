@@ -8,7 +8,9 @@
     <script type="text/javascript" src="http://static.robotwebtools.org/EaselJS/current/easeljs.min.js"></script>
     <script type="text/javascript" src="http://static.robotwebtools.org/EventEmitter2/current/eventemitter2.min.js"></script>
     <script type="text/javascript" src="http://static.robotwebtools.org/ros2djs/current/ros2d.min.js"></script>
-
+<style>
+  
+</style>
     
 
     <script type="text/javascript" type="text/javascript">
@@ -76,10 +78,12 @@
     <!--     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">-->
     <link rel="stylesheet" href="snakebar.css">
 
-    <link rel="stylesheet" href="mintyStyle.css">
+    <link rel="stylesheet" href="/theme/mintyStyle.css">
     <div  class="alert alert-success">
     <nav class="navbar navbar-expand-lg">
-        <a class="navbar-brand" style="font-weight: bolder;" href="#">Mappy</a>
+      
+      <img  style = "padding: 0px 15px;" width="100" height="auto" src = "/theme/logo.svg" alt="My Happy logo"/>
+        <a class="navbar-brand" style="font-weight: bolder;font-size:large;" href="#">Mappy</a>
       
         <form class="form-inline">
             <button @click="connect" class="btn btn-sm btn-outline-secondary" type="button">Connect</button>
@@ -186,11 +190,12 @@ image_topic.subscribe(function(message) {
   </div>
 
 <!-- INFO -->
+<footer>
 <div class="row my-4">
     <div class="col-md-2"></div>
     <div class="col-md-8">
         <div class="alert alert-success">
-            <h4 class="alert-heading">Mappy demo</h4>
+            <h4 class="alert-heading">Instructions:</h4>
             <ul>
                 <li>set speed using a slider</li>
                 <li>use joystick</li>
@@ -199,7 +204,7 @@ image_topic.subscribe(function(message) {
     </div>
     <div class="col-md-2"></div>
 </div>
-
+</footer>
 <div id="snackbar"><p>
 </p></div>
 
