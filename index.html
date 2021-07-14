@@ -67,7 +67,7 @@
 
 
 
-    <title>Mappy</title>
+    <title >Mappy</title>
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -79,7 +79,7 @@
     <link rel="stylesheet" href="mintyStyle.css">
     <div  class="alert alert-success">
     <nav class="navbar navbar-expand-lg">
-        <a class="navbar-brand" href="#">Mappy</a>
+        <a class="navbar-brand" style="font-weight: bolder;" href="#">Mappy</a>
       
         <form class="form-inline">
             <button @click="connect" class="btn btn-sm btn-outline-secondary" type="button">Connect</button>
@@ -101,17 +101,7 @@
     <script src="//yoannmoinet.github.io/nipplejs/javascripts/nipplejs.js"></script>
     <script src="webui.js"></script>
 
-    <!-- SPEED -->
-<div class="row">
-    <div class="col-md-4"></div>
-    <div class=" col-md-4">
-        <label for="robot-speed">
-            <strong>Robot speed</strong>
-        </label>
-        <input type="range" min="15" max="80" class="custom-range" id="robot-speed">
-    </div>
-    <div class="col-md-4"></div>
-</div>
+
 
 <div id="map"></div>
 
@@ -119,8 +109,9 @@
   image_topic.unsubscribe();
 -->
 <div class="row my-4">
-    <div class="col d-flex justify-content-center">
-        <img id="my_image" style='height: 100%; width: 100%; object-fit: contain' src="assets/img/placeholder.png">    </div>
+    <div >
+        <img id="my_image" style='height: 50%; width: 50%; object-fit: contain' src="assets/img/placeholder.png">    
+      </div>
 </div>
 
 <script>
@@ -182,6 +173,17 @@ image_topic.subscribe(function(message) {
     }
   </script>
 
+    <!-- SPEED -->
+    <div class="row">
+      <div class="col-md-4"></div>
+      <div class=" col-md-4">
+          <label for="robot-speed">
+              <strong>Robot speed</strong>
+          </label>
+          <input type="range" min="15" max="80" class="custom-range" id="robot-speed">
+      </div>
+      <div class="col-md-4"></div>
+  </div>
 
 <!-- INFO -->
 <div class="row my-4">
